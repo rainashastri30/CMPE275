@@ -1,16 +1,19 @@
 package service;
 
+import model.Person;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import dao.PersonDao;
-import model.Person;
 
 @Configuration
 @EnableWebMvc
 @ComponentScan
+@Service
 public class PersonService {
 	@Autowired
 	PersonDao personDao;

@@ -3,6 +3,9 @@ package service;
 import model.Organization;
 import model.Person;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class OrganizationService {
 
 	public void createOrganization(Organization org) {

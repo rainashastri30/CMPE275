@@ -1,10 +1,17 @@
 package model;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
+@Entity
+@Table(name="Address")
 public class Address {
 	private String street;
 	private String city;
 	private String state;
-	private String zip;
+	private long zip;
 	public String getStreet() {
 		return street;
 	}
@@ -23,10 +30,10 @@ public class Address {
 	public void setState(String state) {
 		this.state = state;
 	}
-	public String getZip() {
+	public long getZip() {
 		return zip;
 	}
-	public void setZip(String zip) {
+	public void setZip(long zip) {
 		this.zip = zip;
 	}
 	

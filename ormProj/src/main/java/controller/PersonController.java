@@ -5,25 +5,19 @@ import model.Organization;
 import model.Person;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-
-import com.sun.mail.handlers.message_rfc822;
-import com.sun.research.ws.wadl.Request;
 
 import service.PersonService;
 
-@Configuration
-@EnableWebMvc
-@ComponentScan
+
 @Controller
+@RequestMapping("/person")
 public class PersonController {
 
 	@Autowired
@@ -31,7 +25,8 @@ public class PersonController {
 
 	@RequestMapping(value = "/greeting", produces = { "application/xml",
 			"application/json" })
-	public @ResponseBody Person greeting(
+	public @ResponseBody
+	Person greeting(
 			@RequestParam(value = "name", required = false, defaultValue = "World") String name,
 			Model model) {
 		Person person = new Person();
@@ -49,30 +44,9 @@ public class PersonController {
 		return "person";
 	}
 
-	@RequestMapping("/person")
-	public Person createPerson(
-			@RequestParam(value = "firstname", required = true) String firstName,
-			@RequestParam(value = "lastName", required = true) String lastName,
-			@RequestParam(value = "email", required = true) String email,
-			@RequestParam(value = "description", required = false) String description,
-			@RequestParam(value = "street", required = false) String street,
-			@RequestParam(value = "city", required = false) String city,
-			@RequestParam(value = "state", required = false) String state,
-			@RequestParam(value = "zip", required = false) String zip,
-			@RequestParam(value = "id", required = false) int id) {
+	@RequestMapping(value = "/", method = RequestMethod.POST)
+	public Person createPerson(Person person, Address address, Organization org) {
 
-		Address address = new Address();
-		address.setCity(city);
-		address.setState(state);
-		address.setStreet(street);
-		address.setZip(zip);
-		Organization org = new Organization();
-		org.setId(id);
-		Person person = new Person();
-		person.setFirstname(firstName);
-		person.setLastname(lastName);
-		person.setEmail(email);
-		person.setDescription(description);
 		person.setAddress(address);
 		person.setOrg(org);
 
@@ -82,15 +56,22 @@ public class PersonController {
 
 	}
 
-	@RequestMapping(value = "person/{id}", method = RequestMethod.GET)
-	public Person getPersonInfo(@RequestParam(value = "id") int personId) {
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = {
+			"application/xml", "application/json" })
+	public Person getPersonInfo(@PathVariable int personId) {
 		personService.getPersonInfo(personId);
-		return null;
+		return new Person();
 	}
 
-	@RequestMapping(value = "person/{id}", method = RequestMethod.POST)
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	public String getPersonInfoHtmlView(@PathVariable int personId) {
+		getPersonInfo(personId);
+		return "personCreateSucces";
+	}
+
+	@RequestMapping(value = "/{id}", method = RequestMethod.POST)
 	public Person updatePersonInfo(
-			@RequestParam(value = "id", required = true) String personId,
+			@PathVariable int personId,
 			@RequestParam(value = "firstname", required = true) String firstName,
 			@RequestParam(value = "lastName", required = true) String lastName,
 			@RequestParam(value = "email", required = true) String email,
@@ -98,8 +79,8 @@ public class PersonController {
 			@RequestParam(value = "street", required = false) String street,
 			@RequestParam(value = "city", required = false) String city,
 			@RequestParam(value = "state", required = false) String state,
-			@RequestParam(value = "zip", required = false) String zip,
-			@RequestParam(value = "id", required = false) int id) {
+			@RequestParam(value = "zip", required = false) long zip,
+			@RequestParam(value = "id", required = false) int orgId) {
 
 		Address address = new Address();
 		address.setCity(city);
@@ -107,7 +88,7 @@ public class PersonController {
 		address.setStreet(street);
 		address.setZip(zip);
 		Organization org = new Organization();
-		org.setId(id);
+		org.setId(orgId);
 		Person person = new Person();
 		person.setFirstname(firstName);
 		person.setLastname(lastName);
@@ -117,13 +98,13 @@ public class PersonController {
 		person.setOrg(org);
 
 		personService.updatePersonInfo(person);
-		return null;
+		return person;
 	}
 
-	@RequestMapping(value = "person/{id}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	public Person deletePerson(@RequestParam(value = "id") int personId) {
 		personService.deletePerson(personId);
-		return null;
+		return new Person();
 	}
 
 }
